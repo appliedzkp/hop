@@ -4,8 +4,8 @@ import { Addresses } from '@hop-protocol/core/addresses'
 import {
   ArbERC20,
   ArbERC20__factory,
-  ArbitrumGlobalInbox,
-  ArbitrumGlobalInbox__factory,
+  ArbitrumInbox,
+  ArbitrumInbox__factory,
   L1OptimismTokenBridge,
   L1OptimismTokenBridge__factory,
   L1PolygonPosRootChainManager,
@@ -27,8 +27,8 @@ import { config, metadata } from './config'
 import { getContractFactory, predeploys } from '@eth-optimism/contracts'
 import { parseEther, serializeTransaction } from 'ethers/lib/utils'
 
-export type L1Factory = L1PolygonPosRootChainManager__factory | L1XDaiForeignOmniBridge__factory | ArbitrumGlobalInbox__factory | L1OptimismTokenBridge__factory
-export type L1Contract = L1PolygonPosRootChainManager | L1XDaiForeignOmniBridge | ArbitrumGlobalInbox | L1OptimismTokenBridge
+export type L1Factory = L1PolygonPosRootChainManager__factory | L1XDaiForeignOmniBridge__factory | ArbitrumInbox__factory | L1OptimismTokenBridge__factory
+export type L1Contract = L1PolygonPosRootChainManager | L1XDaiForeignOmniBridge | ArbitrumInbox | L1OptimismTokenBridge
 
 export type L2Factory = L2PolygonChildERC20__factory | L2XDaiToken__factory | ArbERC20__factory | L2OptimismTokenBridge__factory
 export type L2Contract = L2PolygonChildERC20 | L2XDaiToken | ArbERC20 | L2OptimismTokenBridge
