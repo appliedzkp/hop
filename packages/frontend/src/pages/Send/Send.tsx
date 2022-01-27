@@ -40,6 +40,7 @@ import {
 import { ButtonsWrapper } from 'src/components/buttons/ButtonsWrapper'
 import useAvailableLiquidity from './useAvailableLiquidity'
 import useIsSmartContractWallet from 'src/hooks/useIsSmartContractWallet'
+import L1CanonicalBridgeOption from './L1CanonicalBridgeOption'
 
 const Send: FC = () => {
   const styles = useSendStyles()
@@ -282,7 +283,7 @@ const Send: FC = () => {
     estimatedReceived,
     priceImpact,
     fromTokenAmount,
-    toTokenAmount
+    toTokenAmount,
   ])
 
   useEffect(() => {
@@ -566,6 +567,15 @@ const Send: FC = () => {
         disableInput
       />
 
+      {fromNetwork?.isLayer1 && (
+        <L1CanonicalBridgeOption
+          amount={fromTokenAmountBN}
+          token={sourceToken}
+          estimatedAmount={toTokenAmount}
+          destNetwork={toNetwork}
+        />
+      )}
+
       <CustomRecipientDropdown
         styles={styles}
         customRecipient={customRecipient}
@@ -574,9 +584,9 @@ const Send: FC = () => {
       />
 
       <div className={styles.smartContractWalletWarning}>
-        <Alert severity="warning">{
-          isSmartContractWallet 
-            ? 'The connected account is detected to be a smart contract wallet. Please provide a custom recipient to proceed with this transaction.' 
+        <Alert severity="warning">
+          {isSmartContractWallet
+            ? 'The connected account is detected to be a smart contract wallet. Please provide a custom recipient to proceed with this transaction.'
             : ''}
         </Alert>
       </div>
@@ -612,7 +622,6 @@ const Send: FC = () => {
       <Alert severity="error" onClose={() => setError(null)} text={error} />
       {!error && <Alert severity="warning">{warning}</Alert>}
       <Alert severity="warning">{manualWarning}</Alert>
-      
 
       <ButtonsWrapper>
         {!sendButtonActive && (
