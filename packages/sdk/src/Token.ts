@@ -1,7 +1,7 @@
 import Base, { ChainProviders } from './Base'
 import Chain from './models/Chain'
 import TokenModel from './models/Token'
-import { BigNumber, Contract, Signer, ethers, providers } from 'ethers'
+import { BigNumber, BigNumberish, Contract, Signer, ethers, providers } from 'ethers'
 import { ERC20__factory, WETH9__factory } from '@hop-protocol/core/contracts'
 import { TAmount, TChain } from './types'
 import { TokenSymbol, WrappedToken } from './constants'
@@ -98,6 +98,11 @@ class Token extends Base {
       throw new Error('signer required')
     }
     return tokenContract.allowance(address, spender)
+  }
+
+  public async needsApproval (spender: string, amount: BigNumberish) {
+    const allowance = await this.allowance(spender)
+    return allowance.lt(amount)
   }
 
   /**

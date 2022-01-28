@@ -1,30 +1,84 @@
-import { HopBridge } from '@hop-protocol/sdk'
+import React, { useEffect, useState } from 'react'
+import { HopBridge, NetworkSlug, Token } from '@hop-protocol/sdk'
+import { BigNumber } from 'ethers'
 import { useQuery } from 'react-query'
+import { hopAppNetwork } from 'src/config'
+import Network from 'src/models/Network'
+import { toTokenDisplay } from 'src/utils'
+import InfoTooltip from 'src/components/infoTooltip'
 
 const useAvailableLiquidity = (
   bridge?: HopBridge,
-  sourceChain?: string,
-  destinationChain?: string
+  sourceToken?: Token,
+  sourceChain?: Network,
+  destinationChain?: Network,
+  requiredLiquidity?: BigNumber
 ) => {
-  const tokenSymbol = bridge?.getTokenSymbol()
+  const [sufficientLiquidity, setSufficientLiquidity] = useState(false)
+  const [warning, setWarning] = useState<any>()
 
-  const queryKey = `availableLiquidity:${tokenSymbol}:${sourceChain}:${destinationChain}`
+  const queryKey = `availableLiquidity:${sourceToken?.symbol}:${sourceChain?.slug}:${destinationChain?.slug}`
 
   const { isLoading, data, error } = useQuery(
-    [queryKey, tokenSymbol, sourceChain, destinationChain],
+    [queryKey, sourceToken?.symbol, sourceChain, destinationChain?.slug],
     async () => {
-      if (sourceChain && destinationChain) {
-        return bridge?.getFrontendAvailableLiquidity(sourceChain, destinationChain)
+      if (sourceChain && destinationChain?.slug) {
+        return bridge?.getFrontendAvailableLiquidity(sourceChain.slug, destinationChain?.slug)
       }
     },
     {
-      enabled: !!bridge && !!tokenSymbol && !!sourceChain && !!destinationChain,
+      enabled: !!bridge && !!sourceToken?.symbol && !!sourceChain?.slug && !!destinationChain?.slug,
       refetchInterval: 7e3,
     }
   )
 
+  useEffect(() => {
+    if (!destinationChain || !data || !requiredLiquidity || !sourceToken) {
+      setSufficientLiquidity(false)
+      return setWarning('')
+    }
+
+    const isAvailable = BigNumber.from(data).gte(requiredLiquidity)
+    const formattedAmount = toTokenDisplay(data, sourceToken.decimals)
+
+    if (sourceChain?.isLayer1 || isAvailable) {
+      setSufficientLiquidity(true)
+      return setWarning('')
+    }
+
+    const warningMessage = (
+      <>
+        Insufficient liquidity. There is {formattedAmount} {sourceToken.symbol} bonder liquidity
+        available on {destinationChain.name}. Please try again in a few minutes when liquidity
+        becomes available again.{' '}
+        <InfoTooltip
+          title={
+            <>
+              <div>
+                The Bonder does not have enough liquidity to bond the transfer at the destination.
+                Liquidity will become available again after the bonder has settled any bonded
+                transfers.
+              </div>
+              <div>Available liquidity: {formattedAmount}</div>
+              <div>
+                Required liquidity: {toTokenDisplay(requiredLiquidity, sourceToken.decimals)}
+              </div>
+            </>
+          }
+        />
+      </>
+    )
+
+    if (hopAppNetwork !== NetworkSlug.Staging) {
+      setSufficientLiquidity(false)
+      setWarning(warningMessage)
+    }
+  }, [sourceChain, sourceToken, destinationChain, data, requiredLiquidity])
+
   return {
-    availableLiquidity: data,
+    availableLiquidity: !sourceChain?.isLayer1 && !data,
+    sufficientLiquidity,
+    warning,
     isLoading,
     error,
   }

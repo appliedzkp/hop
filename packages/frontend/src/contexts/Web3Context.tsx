@@ -8,7 +8,7 @@ import React, {
   useCallback,
 } from 'react'
 import Onboard from 'bnc-onboard'
-import { ethers, Contract, BigNumber } from 'ethers'
+import { ethers, BigNumber } from 'ethers'
 import Address from 'src/models/Address'
 import { networkIdToSlug, getRpcUrl, getBaseExplorerUrl } from 'src/utils'
 import { blocknativeDappid } from 'src/config'
@@ -32,7 +32,7 @@ type Props = {
   disconnectWallet: () => void
   walletConnected: boolean
   walletName: string
-  checkConnectedNetworkId: (networkId: number) => Promise<boolean>
+  checkConnectedNetworkId: (networkId: number | string) => Promise<boolean>
 }
 
 // TODO: modularize
@@ -277,8 +277,12 @@ const Web3ContextProvider: FC = ({ children }) => {
 
   // TODO: cleanup
   const checkConnectedNetworkId = useCallback(
-    async (networkId?: number): Promise<boolean> => {
+    async (networkId?: number | string): Promise<boolean> => {
       if (!(networkId && provider)) return false
+
+      if (typeof networkId === 'string') {
+        networkId = Number(networkId)
+      }
 
       const signerNetworkId = (await provider.getNetwork())?.chainId
       logger.debug('checkConnectedNetworkId', networkId, signerNetworkId)
@@ -357,7 +361,7 @@ const Web3ContextProvider: FC = ({ children }) => {
         requestWallet,
         disconnectWallet,
         walletName,
-        checkConnectedNetworkId
+        checkConnectedNetworkId,
       }}
     >
       {children}

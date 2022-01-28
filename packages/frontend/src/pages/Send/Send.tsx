@@ -16,9 +16,6 @@ import { commafy, findMatchingBridge, sanitizeNumericalString, toTokenDisplay } 
 import useSendData from 'src/pages/Send/useSendData'
 import AmmDetails from 'src/components/AmmDetails'
 import FeeDetails from 'src/components/FeeDetails'
-import { hopAppNetwork } from 'src/config'
-import InfoTooltip from 'src/components/infoTooltip'
-import { ChainSlug } from '@hop-protocol/sdk'
 import { amountToBN, formatError } from 'src/utils/format'
 import { useSendStyles } from './useSendStyles'
 import SendHeader from './SendHeader'
@@ -41,6 +38,7 @@ import { ButtonsWrapper } from 'src/components/buttons/ButtonsWrapper'
 import useAvailableLiquidity from './useAvailableLiquidity'
 import useIsSmartContractWallet from 'src/hooks/useIsSmartContractWallet'
 import L1CanonicalBridgeOption from './L1CanonicalBridgeOption'
+import { useL1CanonicalBridge } from './useL1CanonicalBridge'
 
 const Send: FC = () => {
   const styles = useSendStyles()
@@ -65,10 +63,8 @@ const Send: FC = () => {
   const [amountOutMinDisplay, setAmountOutMinDisplay] = useState<string>()
   const [warning, setWarning] = useState<any>(null)
   const [error, setError] = useState<string | null | undefined>(null)
-  const [noLiquidityWarning, setNoLiquidityWarning] = useState<any>(null)
   const [minimumSendWarning, setMinimumSendWarning] = useState<string | null | undefined>(null)
   const [info, setInfo] = useState<string | null | undefined>(null)
-  const [isLiquidityAvailable, setIsLiquidityAvailable] = useState<boolean>(true)
   const [customRecipient, setCustomRecipient] = useState<string>()
   const [manualWarning, setManualWarning] = useState<string>('')
   const isSmartContractWallet = useIsSmartContractWallet()
@@ -116,13 +112,6 @@ const Send: FC = () => {
     }
   }, [sourceToken, fromTokenAmount])
 
-  // Get available liquidity
-  const { availableLiquidity } = useAvailableLiquidity(
-    selectedBridge,
-    fromNetwork?.slug,
-    toNetwork?.slug
-  )
-
   // Use send data for tx
   const {
     amountOut,
@@ -138,6 +127,13 @@ const Send: FC = () => {
     estimatedReceived,
     error: sendDataError,
   } = useSendData(sourceToken, slippageTolerance, fromNetwork, toNetwork, fromTokenAmountBN)
+
+  // Get available liquidity
+  const {
+    availableLiquidity,
+    sufficientLiquidity,
+    warning: liquidityWarning,
+  } = useAvailableLiquidity(selectedBridge, sourceToken, fromNetwork, toNetwork, requiredLiquidity)
 
   // Set toAmount
   useEffect(() => {
@@ -196,53 +192,6 @@ const Send: FC = () => {
     }
   }, [unsupportedAsset])
 
-  // Check if there is sufficient available liquidity
-  useEffect(() => {
-    const checkAvailableLiquidity = async () => {
-      if (!toNetwork || !availableLiquidity || !requiredLiquidity || !sourceToken) {
-        setNoLiquidityWarning('')
-        return
-      }
-
-      const isAvailable = BigNumber.from(availableLiquidity).gte(requiredLiquidity)
-      const formattedAmount = toTokenDisplay(availableLiquidity, sourceToken.decimals)
-
-      const warningMessage = (
-        <>
-          Insufficient liquidity. There is {formattedAmount} {sourceToken.symbol} bonder liquidity
-          available on {toNetwork.name}. Please try again in a few minutes when liquidity becomes
-          available again.{' '}
-          <InfoTooltip
-            title={
-              <>
-                <div>
-                  The Bonder does not have enough liquidity to bond the transfer at the destination.
-                  Liquidity will become available again after the bonder has settled any bonded
-                  transfers.
-                </div>
-                <div>Available liquidity: {formattedAmount}</div>
-                <div>
-                  Required liquidity: {toTokenDisplay(requiredLiquidity, sourceToken.decimals)}
-                </div>
-              </>
-            }
-          />
-        </>
-      )
-      if (!isAvailable && !fromNetwork?.isLayer1) {
-        if (hopAppNetwork !== 'staging') {
-          setIsLiquidityAvailable(false)
-          setNoLiquidityWarning(warningMessage)
-        }
-      } else {
-        setIsLiquidityAvailable(true)
-        setNoLiquidityWarning('')
-      }
-    }
-
-    checkAvailableLiquidity()
-  }, [fromNetwork, sourceToken, toNetwork, availableLiquidity, requiredLiquidity])
-
   const checkingLiquidity = useMemo(() => {
     return !fromNetwork?.isLayer1 && availableLiquidity === undefined
   }, [fromNetwork, availableLiquidity])
@@ -259,7 +208,7 @@ const Send: FC = () => {
   }, [estimatedReceived, adjustedDestinationTxFee])
 
   useEffect(() => {
-    let message = noLiquidityWarning || minimumSendWarning
+    let message = liquidityWarning || minimumSendWarning
 
     const isFavorableSlippage = Number(toTokenAmount) >= Number(fromTokenAmount)
     const isHighPriceImpact = priceImpact && priceImpact !== 100 && Math.abs(priceImpact) >= 1
@@ -277,7 +226,7 @@ const Send: FC = () => {
 
     setWarning(message)
   }, [
-    noLiquidityWarning,
+    liquidityWarning,
     minimumSendWarning,
     sufficientBalanceWarning,
     estimatedReceived,
@@ -404,6 +353,14 @@ const Send: FC = () => {
     estimatedReceived: estimatedReceivedDisplay,
   })
 
+  const { l1CanonicalBridge, sendL1CanonicalBridge } = useL1CanonicalBridge(
+    sourceToken,
+    toNetwork,
+    fromTokenAmountBN,
+    estimatedReceived,
+    estimatedGasCost
+  )
+
   useEffect(() => {
     if (tx) {
       // clear from token input field
@@ -499,7 +456,7 @@ const Send: FC = () => {
       toTokenAmount &&
       rate &&
       sufficientBalance &&
-      isLiquidityAvailable &&
+      sufficientLiquidity &&
       estimatedReceived?.gt(0)
     )
   }, [
@@ -512,7 +469,7 @@ const Send: FC = () => {
     toTokenAmount,
     rate,
     sufficientBalance,
-    isLiquidityAvailable,
+    sufficientLiquidity,
     estimatedReceived,
   ])
 
@@ -570,9 +527,9 @@ const Send: FC = () => {
       {fromNetwork?.isLayer1 && (
         <L1CanonicalBridgeOption
           amount={fromTokenAmountBN}
-          token={sourceToken}
-          estimatedAmount={toTokenAmount}
-          destNetwork={toNetwork}
+          l1CanonicalBridge={l1CanonicalBridge}
+          sendL1CanonicalBridge={sendL1CanonicalBridge}
+          destToken={destToken}
         />
       )}
 
