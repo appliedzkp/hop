@@ -1,3 +1,6 @@
-import InfoTooltip from './InfoTooltip'
+import HelpToolTip from './HelpTooltip'
 
-export default InfoTooltip
+export { default as FeeDetails } from './FeeDetails'
+export { default as AmmDetails } from './AmmDetails'
+
+export default HelpToolTip

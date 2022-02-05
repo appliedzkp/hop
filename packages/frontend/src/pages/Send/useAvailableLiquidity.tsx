@@ -5,7 +5,7 @@ import { useQuery } from 'react-query'
 import { hopAppNetwork } from 'src/config'
 import Network from 'src/models/Network'
 import { toTokenDisplay } from 'src/utils'
-import InfoTooltip from 'src/components/infoTooltip'
+import InfoTooltip from 'src/components/InfoTooltip'
 
 const useAvailableLiquidity = (
   bridge?: HopBridge,

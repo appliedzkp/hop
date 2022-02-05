@@ -5,7 +5,7 @@ import Network from 'src/models/Network'
 import { commafy, toTokenDisplay } from 'src/utils'
 import ConvertOption, { SendData } from './ConvertOption'
 import DetailRow from 'src/components/DetailRow'
-import AmmDetails from 'src/components/AmmDetails'
+import { AmmDetails } from 'src/components/InfoTooltip'
 
 class AmmConvertOption extends ConvertOption {
   readonly name: string
