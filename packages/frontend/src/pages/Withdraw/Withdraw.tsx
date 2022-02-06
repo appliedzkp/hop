@@ -15,7 +15,7 @@ import { formatError } from 'src/utils/format'
 import { useApp } from 'src/contexts/AppContext'
 import { useWeb3Context } from 'src/contexts/Web3Context'
 import Button from 'src/components/buttons/Button'
-import InfoTooltip from 'src/components/infoTooltip'
+import InfoTooltip from 'src/components/InfoTooltip'
 
 const useStyles = makeStyles(theme => ({
   root: {

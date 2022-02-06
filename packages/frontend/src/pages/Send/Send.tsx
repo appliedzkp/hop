@@ -38,6 +38,7 @@ import useAvailableLiquidity from './useAvailableLiquidity'
 import useIsSmartContractWallet from 'src/hooks/useIsSmartContractWallet'
 import L1CanonicalBridgeOption from './L1CanonicalBridgeOption'
 import { useL1CanonicalBridge } from './useL1CanonicalBridge'
+import { ChainSlug } from '@hop-protocol/sdk'
 
 const Send: FC = () => {
   const styles = useSendStyles()
