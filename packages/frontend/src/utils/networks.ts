@@ -10,6 +10,13 @@ export function findNetworkBySlug(slug: string, networks: Network[] = allNetwork
   return find(networks, ['slug', slug])
 }
 
+export function findNetwork(slugOrNetwork?: string | Network, networks: Network[] = allNetworks) {
+  return find(networks, [
+    'slug',
+    slugOrNetwork instanceof Network ? slugOrNetwork.slug : slugOrNetwork,
+  ])
+}
+
 export const networkSlugToId = (slug: string) => {
   return networks[slug]?.networkId
 }
@@ -56,8 +63,8 @@ export function getNetworkWaitConfirmations(tChain: TChain) {
   return networks[tChain.slug].waitConfirmations
 }
 
-export function isL1ToL2(srcNetwork: Network, destNetwork: Network) {
-  if (srcNetwork.isLayer1 && !destNetwork.isLayer1) {
+export function isL1ToL2(srcNetwork?: Network, destNetwork?: Network) {
+  if (srcNetwork?.isLayer1 && !destNetwork?.isLayer1) {
     return true
   }
 

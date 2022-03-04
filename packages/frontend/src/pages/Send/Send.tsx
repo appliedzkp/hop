@@ -12,7 +12,13 @@ import Network from 'src/models/Network'
 import { useWeb3Context } from 'src/contexts/Web3Context'
 import { useApp } from 'src/contexts/AppContext'
 import logger from 'src/logger'
-import { commafy, findMatchingBridge, sanitizeNumericalString, toTokenDisplay } from 'src/utils'
+import {
+  commafy,
+  findMatchingBridge,
+  isL1ToL2,
+  sanitizeNumericalString,
+  toTokenDisplay,
+} from 'src/utils'
 import useSendData from 'src/pages/Send/useSendData'
 import AmmDetails from 'src/components/AmmDetails'
 import FeeDetails from 'src/components/FeeDetails'
@@ -36,10 +42,12 @@ import {
   useEstimateTxCost,
   useTxResult,
   useSufficientBalance,
+  useDisableTxs,
 } from 'src/hooks'
 import { ButtonsWrapper } from 'src/components/buttons/ButtonsWrapper'
 import useAvailableLiquidity from './useAvailableLiquidity'
 import useIsSmartContractWallet from 'src/hooks/useIsSmartContractWallet'
+import { ExternalLink } from 'src/components/Link'
 
 const Send: FC = () => {
   const styles = useSendStyles()
@@ -282,7 +290,7 @@ const Send: FC = () => {
     estimatedReceived,
     priceImpact,
     fromTokenAmount,
-    toTokenAmount
+    toTokenAmount,
   ])
 
   useEffect(() => {
@@ -485,8 +493,11 @@ const Send: FC = () => {
     setManualWarning('')
   }, [fromNetwork?.slug, toNetwork?.slug, customRecipient, address])
 
-  const approveButtonActive = !needsTokenForFee && !unsupportedAsset && needsApproval
+  const ress = useDisableTxs(fromNetwork, toNetwork)
+  console.log(`ress:`, ress)
 
+  const approveButtonActive = !needsTokenForFee && !unsupportedAsset && needsApproval
+  const isL1ToArbitrum = isL1ToL2(fromNetwork, toNetwork) && toNetwork?.slug === ChainSlug.Arbitrum
   const sendButtonActive = useMemo(() => {
     return !!(
       !needsApproval &&
@@ -499,7 +510,8 @@ const Send: FC = () => {
       rate &&
       sufficientBalance &&
       isLiquidityAvailable &&
-      estimatedReceived?.gt(0)
+      estimatedReceived?.gt(0) &&
+      !isL1ToArbitrum
     )
   }, [
     needsApproval,
@@ -513,6 +525,7 @@ const Send: FC = () => {
     sufficientBalance,
     isLiquidityAvailable,
     estimatedReceived,
+    isL1ToArbitrum,
   ])
 
   return (
@@ -574,12 +587,23 @@ const Send: FC = () => {
       />
 
       <div className={styles.smartContractWalletWarning}>
-        <Alert severity="warning">{
-          isSmartContractWallet 
-            ? 'The connected account is detected to be a smart contract wallet. Please provide a custom recipient to proceed with this transaction.' 
+        <Alert severity="warning">
+          {isSmartContractWallet
+            ? 'The connected account is detected to be a smart contract wallet. Please provide a custom recipient to proceed with this transaction.'
             : ''}
         </Alert>
       </div>
+
+      {isL1ToArbitrum && (
+        <Alert severity="warning">
+          <ExternalLink
+            href="https://bridge.arbitrum.io"
+            text="Transfers from Ethereum mainnet to Arbitrum are currently disabled. Please use the"
+            linkText="official Arbitrum bridge"
+            postText="for now."
+          />
+        </Alert>
+      )}
 
       <div className={styles.details}>
         <div className={styles.destinationTxFeeAndAmount}>
@@ -612,7 +636,6 @@ const Send: FC = () => {
       <Alert severity="error" onClose={() => setError(null)} text={error} />
       {!error && <Alert severity="warning">{warning}</Alert>}
       <Alert severity="warning">{manualWarning}</Alert>
-      
 
       <ButtonsWrapper>
         {!sendButtonActive && (
