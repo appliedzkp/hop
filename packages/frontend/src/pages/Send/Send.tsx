@@ -353,7 +353,7 @@ const Send: FC = () => {
     estimatedReceived: estimatedReceivedDisplay,
   })
 
-  const { l1CanonicalBridge, sendL1CanonicalBridge, usingL1CanonicalBridge, setUl1cb } =
+  const { l1CanonicalBridge, sendL1CanonicalBridge, usingNativeBridge, setUsingNativeBridge } =
     useL1CanonicalBridge(sourceToken, fromTokenAmountBN, toNetwork, estimatedReceived)
 
   useEffect(() => {
@@ -507,7 +507,7 @@ const Send: FC = () => {
       </Flex>
 
       <SendAmountSelectorCard
-        value={usingL1CanonicalBridge ? fromTokenAmount : toTokenAmount}
+        value={usingNativeBridge ? fromTokenAmount : toTokenAmount}
         token={destToken ?? placeholderToken}
         label={'To (estimated)'}
         selectedNetwork={toNetwork}
@@ -526,9 +526,9 @@ const Send: FC = () => {
           sendL1CanonicalBridge={sendL1CanonicalBridge}
           destToken={destToken}
           destNetwork={toNetwork}
-          usingL1CanonicalBridge={usingL1CanonicalBridge}
-          setUl1cb={setUl1cb}
+          setUsingNativeBridge={setUsingNativeBridge}
           estimatedReceivedDisplay={estimatedReceivedDisplay}
+          usingNativeBridge={usingNativeBridge}
         />
       )}
 
@@ -561,7 +561,7 @@ const Send: FC = () => {
           <DetailRow
             title="Estimated Received"
             tooltip={
-              usingL1CanonicalBridge ? undefined : (
+              usingNativeBridge ? undefined : (
                 <AmmDetails
                   rate={rate}
                   slippageTolerance={slippageTolerance}
@@ -571,7 +571,7 @@ const Send: FC = () => {
               )
             }
             value={
-              usingL1CanonicalBridge
+              usingNativeBridge
                 ? toTokenDisplay(fromTokenAmountBN, destToken?.decimals, destToken?.symbol)
                 : estimatedReceivedDisplay
             }
@@ -592,7 +592,7 @@ const Send: FC = () => {
               className={styles.button}
               large
               highlighted={!!needsApproval}
-              disabled={!approveButtonActive || usingL1CanonicalBridge}
+              disabled={!approveButtonActive || usingNativeBridge}
               onClick={handleApprove}
               loading={approving}
               fullWidth
@@ -605,7 +605,7 @@ const Send: FC = () => {
           <Button
             className={styles.button}
             startIcon={sendButtonActive && <SendIcon />}
-            onClick={usingL1CanonicalBridge ? sendL1CanonicalBridge : send}
+            onClick={usingNativeBridge ? sendL1CanonicalBridge : send}
             disabled={!sendButtonActive}
             loading={sending}
             large

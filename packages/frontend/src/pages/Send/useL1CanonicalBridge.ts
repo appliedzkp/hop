@@ -28,16 +28,16 @@ export function useL1CanonicalBridge(
   const { checkConnectedNetworkId, provider } = useWeb3Context()
 
   const [l1CanonicalBridge, setL1CanonicalBridge] = useState<CanonicalBridge | undefined>()
-  const [usingL1CanonicalBridge, setUl1cb] = useLocalStorage('using-l1-canonical-bridge', false)
+  const [usingNativeBridge, setUsingNativeBridge] = useLocalStorage('using-l1-canonical-bridge', false)
 
   useEffect(() => {
     if (sourceTokenAmount && estimatedReceived && l1CanonicalBridge) {
-      if (usingL1CanonicalBridge == null && sourceTokenAmount.gt(estimatedReceived)) {
-        return setUl1cb(true)
+      if (usingNativeBridge == null && sourceTokenAmount.gt(estimatedReceived)) {
+        return setUsingNativeBridge(true)
       }
 
       if (sourceTokenAmount.lte(estimatedReceived)) {
-        setUl1cb(false)
+        setUsingNativeBridge(false)
       }
     }
   }, [sourceTokenAmount?.toString(), estimatedReceived?.toString(), l1CanonicalBridge])
@@ -88,7 +88,7 @@ export function useL1CanonicalBridge(
   return {
     sendL1CanonicalBridge,
     l1CanonicalBridge,
-    usingL1CanonicalBridge,
-    setUl1cb,
+    usingNativeBridge,
+    setUsingNativeBridge,
   }
 }
