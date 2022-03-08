@@ -14,7 +14,7 @@ interface Props {
   estimatedReceivedDisplay?: string
   l1CanonicalBridge?: CanonicalBridge
   sendL1CanonicalBridge?: () => void
-  setUsingNativeBridge: (u: boolean) => void
+  selectNativeBridge: (u: boolean) => void
   usingNativeBridge?: boolean
 }
 
@@ -25,17 +25,15 @@ function L1CanonicalBridgeOption(props: Props) {
     destToken,
     estimatedReceivedDisplay,
     l1CanonicalBridge,
-    setUsingNativeBridge,
+    selectNativeBridge,
     usingNativeBridge,
   } = props
-
- console.log(`usingNativeBridge:`, usingNativeBridge) 
 
   return (
     <Flex width={'50rem'} mt={3} pointer color="text.secondary">
       {l1CanonicalBridge && (
         <Div fullWidth>
-          <Flex fullWidth justifyBetween px={4} onClick={() => setUsingNativeBridge(false)}>
+          <Flex fullWidth justifyBetween px={4} onClick={() => selectNativeBridge(false)}>
             <Flex alignCenter>
               <Flex mr={2}>
                 {usingNativeBridge ? <RadioButtonUnchecked /> : <RadioButtonChecked />}
@@ -44,7 +42,7 @@ function L1CanonicalBridgeOption(props: Props) {
             </Flex>
             <Flex>{estimatedReceivedDisplay}</Flex>
           </Flex>
-          <Flex fullWidth justifyBetween px={4} onClick={() => setUsingNativeBridge(true)}>
+          <Flex fullWidth justifyBetween px={4} onClick={() => selectNativeBridge(true)}>
             <Flex alignCenter>
               <Flex mr={2}>
                 {usingNativeBridge ? <RadioButtonChecked /> : <RadioButtonUnchecked />}

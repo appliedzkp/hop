@@ -353,7 +353,7 @@ const Send: FC = () => {
     estimatedReceived: estimatedReceivedDisplay,
   })
 
-  const { l1CanonicalBridge, sendL1CanonicalBridge, usingNativeBridge, setUsingNativeBridge } =
+  const { l1CanonicalBridge, sendL1CanonicalBridge, usingNativeBridge, selectNativeBridge } =
     useL1CanonicalBridge(sourceToken, fromTokenAmountBN, toNetwork, estimatedReceived)
 
   useEffect(() => {
@@ -526,7 +526,7 @@ const Send: FC = () => {
           sendL1CanonicalBridge={sendL1CanonicalBridge}
           destToken={destToken}
           destNetwork={toNetwork}
-          setUsingNativeBridge={setUsingNativeBridge}
+          selectNativeBridge={selectNativeBridge}
           estimatedReceivedDisplay={estimatedReceivedDisplay}
           usingNativeBridge={usingNativeBridge}
         />

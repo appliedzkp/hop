@@ -3,7 +3,6 @@ import { ChainId, NetworkSlug, Token } from '@hop-protocol/sdk'
 import { BigNumber, constants } from 'ethers'
 import Network from 'src/models/Network'
 import { useWeb3Context } from 'src/contexts/Web3Context'
-import { useLocalStorage } from 'react-use'
 import logger from 'src/logger'
 import { formatError } from 'src/utils'
 import CanonicalBridge from 'src/models/CanonicalBridge'
@@ -28,19 +27,32 @@ export function useL1CanonicalBridge(
   const { checkConnectedNetworkId, provider } = useWeb3Context()
 
   const [l1CanonicalBridge, setL1CanonicalBridge] = useState<CanonicalBridge | undefined>()
-  const [usingNativeBridge, setUsingNativeBridge] = useLocalStorage('using-l1-canonical-bridge', false)
+  const [usingNativeBridge, setUsingNativeBridge] = useState(false)
+  const [userSpecifiedBridge, setUserSpecifiedBridge] = useState(false)
+
+  function selectNativeBridge(val: boolean) {
+    setUsingNativeBridge(val)
+    setUserSpecifiedBridge(true)
+  }
 
   useEffect(() => {
-    if (sourceTokenAmount && estimatedReceived && l1CanonicalBridge) {
-      if (usingNativeBridge == null && sourceTokenAmount.gt(estimatedReceived)) {
-        return setUsingNativeBridge(true)
-      }
+    if (userSpecifiedBridge) return
 
-      if (sourceTokenAmount.lte(estimatedReceived)) {
+    if (sourceTokenAmount && estimatedReceived && l1CanonicalBridge) {
+      if (!usingNativeBridge && sourceTokenAmount.gt(estimatedReceived)) {
+        setUsingNativeBridge(true)
+      } else if (sourceTokenAmount.lte(estimatedReceived)) {
         setUsingNativeBridge(false)
       }
     }
-  }, [sourceTokenAmount?.toString(), estimatedReceived?.toString(), l1CanonicalBridge])
+
+    return () => setUserSpecifiedBridge(false)
+  }, [
+    sourceTokenAmount?.toString(),
+    estimatedReceived?.toString(),
+    l1CanonicalBridge,
+    destNetwork,
+  ])
 
   useEffect(() => {
     if (!(sourceToken && destNetwork && sourceTokenAmount)) {
@@ -90,5 +102,6 @@ export function useL1CanonicalBridge(
     l1CanonicalBridge,
     usingNativeBridge,
     setUsingNativeBridge,
+    selectNativeBridge,
   }
 }
