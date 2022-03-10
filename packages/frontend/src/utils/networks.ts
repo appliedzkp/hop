@@ -17,6 +17,27 @@ export function findNetwork(slugOrNetwork?: string | Network, networks: Network[
   ])
 }
 
+function normalizeNetworkToSlug(network?: Network | ChainSlug | ChainId) {
+  if (network instanceof Network) {
+    return network.slug
+  }
+  if (typeof network === 'string' && network in ChainSlug) {
+    return network
+  }
+  if (typeof network === 'number') {
+    return networkIdToSlug(network)
+  }
+}
+
+export function isSameNetwork(
+  network1?: Network | ChainSlug | ChainId,
+  network2?: Network | ChainSlug | ChainId
+) {
+  const slug1 = normalizeNetworkToSlug(network1)
+  const slug2 = normalizeNetworkToSlug(network2)
+  return slug1 === slug2
+}
+
 export const networkSlugToId = (slug: string) => {
   return networks[slug]?.networkId
 }
@@ -63,25 +84,37 @@ export function getNetworkWaitConfirmations(tChain: TChain) {
   return networks[tChain.slug].waitConfirmations
 }
 
-export function isL1ToL2(srcNetwork?: Network, destNetwork?: Network) {
-  if (srcNetwork?.isLayer1 && !destNetwork?.isLayer1) {
-    return true
+export function isL1ToL2(srcNetwork?: Network | ChainSlug, destNetwork?: Network | ChainSlug) {
+  if (srcNetwork instanceof Network && destNetwork instanceof Network) {
+    return srcNetwork?.isLayer1 && !destNetwork?.isLayer1
+  }
+
+  if (typeof destNetwork === 'string' && destNetwork in ChainSlug) {
+    return srcNetwork === ChainSlug.Ethereum && destNetwork !== ChainSlug.Ethereum
   }
 
   return false
 }
 
-export function isL2ToL1(srcNetwork: Network, destNetwork: Network) {
-  if (!srcNetwork.isLayer1 && destNetwork.isLayer1) {
-    return true
+export function isL2ToL1(srcNetwork?: Network | ChainSlug, destNetwork?: Network | ChainSlug) {
+  if (srcNetwork instanceof Network && destNetwork instanceof Network) {
+    return !srcNetwork.isLayer1 && destNetwork.isLayer1
+  }
+
+  if (typeof destNetwork === 'string' && destNetwork in ChainSlug) {
+    return srcNetwork !== ChainSlug.Ethereum && destNetwork === ChainSlug.Ethereum
   }
 
   return false
 }
 
-export function isL2ToL2(srcNetwork?: Network, destNetwork?: Network) {
-  if (!srcNetwork?.isLayer1 && !destNetwork?.isLayer1) {
-    return true
+export function isL2ToL2(srcNetwork?: Network | ChainSlug, destNetwork?: Network | ChainSlug) {
+  if (srcNetwork instanceof Network && destNetwork instanceof Network) {
+    return !srcNetwork?.isLayer1 && !destNetwork?.isLayer1
+  }
+
+  if (typeof destNetwork === 'string' && destNetwork in ChainSlug) {
+    return srcNetwork !== ChainSlug.Ethereum && destNetwork !== ChainSlug.Ethereum
   }
 
   return false
