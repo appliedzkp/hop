@@ -354,7 +354,9 @@ const Send: FC = () => {
   })
 
   const { l1CanonicalBridge, sendL1CanonicalBridge, usingNativeBridge, selectNativeBridge } =
-    useL1CanonicalBridge(sourceToken, fromTokenAmountBN, toNetwork, estimatedReceived)
+    useL1CanonicalBridge(sourceToken, fromTokenAmountBN, toNetwork, estimatedReceived, txConfirm, {
+      customRecipient,
+    })
 
   useEffect(() => {
     if (tx) {

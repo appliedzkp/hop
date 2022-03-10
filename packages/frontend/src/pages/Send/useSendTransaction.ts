@@ -16,7 +16,7 @@ type TransactionHandled = {
   txModel: Transaction
 }
 
-function handleTransaction(
+export function handleTransaction(
   tx,
   fromNetwork,
   toNetwork,
