@@ -2,9 +2,9 @@ import { ChainSlug } from '@hop-protocol/sdk'
 import { discordUrl } from 'src/utils'
 
 export enum Direction {
-  l1ToL2 = 'l1ToL2', // all
-  l2ToL2 = 'l2ToL2', // all
-  l2ToL1 = 'l2ToL1', // all
+  l1ToL2 = 'l1ToL2', // all L1 -> L2 txs
+  l2ToL2 = 'l2ToL2', // all L2 -> L2 txs
+  l2ToL1 = 'l2ToL1', // all L2 -> L1 txs
 }
 
 export enum DisableType {
@@ -14,15 +14,16 @@ export enum DisableType {
   destination = 'destination', // specific destination network
 }
 
-// Change this
 const disabled = process.env.REACT_APP_DISABLED_TXS || true
 const warningOnly = process.env.REACT_APP_DISABLED_TXS || false
 
+// Change at least one of these! (Ordered by priority)
 const either: ChainSlug | undefined = ChainSlug.Polygon
 const source: ChainSlug | undefined = undefined
 const destination: ChainSlug | undefined = undefined
 const direction: Direction | any = undefined
 
+// Change this!
 const message = {
   text: 'Warning: transfers to/from Polygon are temporarily disabled. Please, check the #status channel in the Hop',
   href: discordUrl,
@@ -30,6 +31,7 @@ const message = {
   postText: 'for updates and more information.',
 }
 
+// Do not change this!
 const disableType: DisableType | Direction | boolean | undefined = either
   ? DisableType.either
   : source && destination
