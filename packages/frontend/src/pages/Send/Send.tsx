@@ -495,7 +495,6 @@ const Send: FC = () => {
 
   const disabledTxs = useDisableTxs(fromNetwork, toNetwork)
   const approveButtonActive = !needsTokenForFee && !unsupportedAsset && needsApproval
-  const isL1ToArbitrum = isL1ToL2(fromNetwork, toNetwork) && toNetwork?.slug === ChainSlug.Arbitrum
   const sendButtonActive = useMemo(() => {
     return !!(
       !needsApproval &&
@@ -509,7 +508,6 @@ const Send: FC = () => {
       sufficientBalance &&
       isLiquidityAvailable &&
       estimatedReceived?.gt(0) &&
-      !isL1ToArbitrum &&
       (!disabledTxs.disabledTx || disabledTxs.warningOnly)
     )
   }, [
@@ -524,7 +522,6 @@ const Send: FC = () => {
     sufficientBalance,
     isLiquidityAvailable,
     estimatedReceived,
-    isL1ToArbitrum,
     disabledTxs.disabledTx,
     disabledTxs.warningOnly,
   ])
@@ -594,17 +591,6 @@ const Send: FC = () => {
             : ''}
         </Alert>
       </div>
-
-      {isL1ToArbitrum && (
-        <Alert severity="warning">
-          <ExternalLink
-            href="https://bridge.arbitrum.io"
-            text="Transfers from Ethereum mainnet to Arbitrum are currently disabled. Please use the"
-            linkText="official Arbitrum bridge"
-            postText="for now."
-          />
-        </Alert>
-      )}
 
       {disabledTxs.disabledTx && (
         <Alert severity="error">
