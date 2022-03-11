@@ -51,6 +51,8 @@ const networkNames: any = {
   100: 'Gnosis',
   80001: 'Polygon',
   137: 'Polygon',
+  98: 'Devnet',
+  99: 'Zkevm',
 }
 
 const Web3Context = createContext<Props | undefined>(undefined)
@@ -87,6 +89,7 @@ const walletSelectOptions: WalletSelectModuleOptions = {
         100: getRpcUrl(ChainSlug.Gnosis),
         137: getRpcUrl(ChainSlug.Polygon),
         80001: getRpcUrl(ChainSlug.Polygon),
+        98: getRpcUrl(ChainSlug.Ethereum),
       },
     },
     {

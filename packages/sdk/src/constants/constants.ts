@@ -2,7 +2,8 @@ export enum NetworkSlug {
   Mainnet = 'mainnet',
   Staging = 'staging',
   Goerli = 'goerli',
-  Kovan = 'kovan'
+  Kovan = 'kovan',
+  Devnet = 'devnet'
 }
 
 export enum ChainId {
@@ -11,6 +12,7 @@ export enum ChainId {
   Arbitrum = 42161,
   Polygon = 137,
   Gnosis = 100,
+  Zkevm = 99,
 }
 
 export enum ChainName {
@@ -19,6 +21,7 @@ export enum ChainName {
   Arbitrum = 'Arbitrum',
   Polygon = 'Polygon',
   Gnosis = 'Gnosis',
+  Zkevm = 'zkevm',
 }
 
 export enum ChainSlug {
@@ -27,6 +30,7 @@ export enum ChainSlug {
   Arbitrum = 'arbitrum',
   Polygon = 'polygon',
   Gnosis = 'gnosis',
+  Zkevm = 'zkevm',
 }
 
 export enum Slug {
@@ -35,10 +39,12 @@ export enum Slug {
   goerli = 'goerli',
   staging = 'staging',
   mainnet = 'mainnet',
+  devnet = 'devnet',
   arbitrum = 'arbitrum',
   optimism = 'optimism',
   gnosis = 'gnosis',
   polygon = 'polygon',
+  zkevm = 'zkevm',
 }
 
 export enum CanonicalToken {
@@ -77,7 +83,8 @@ export enum TokenIndex {
 export enum BondTransferGasLimit {
   Ethereum = '165000',
   Optimism = '100000000',
-  Arbitrum = '2500000'
+  Arbitrum = '2500000',
+  Zkevm = '100000000',
 }
 
 export const SettlementGasLimitPerTx: Record<string, number> = {
@@ -85,7 +92,8 @@ export const SettlementGasLimitPerTx: Record<string, number> = {
   polygon: 5933,
   gnosis: 3218,
   optimism: 8545,
-  arbitrum: 59105
+  arbitrum: 59105,
+  zkevm: 59105
 }
 
 export const LpFeeBps = '4'

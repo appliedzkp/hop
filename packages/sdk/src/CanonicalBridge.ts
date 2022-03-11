@@ -191,7 +191,7 @@ class CanonicalBridge extends Base {
         // Gnosis requires a higher gas limit
         gasLimit: 300000
       })
-    } else if ((chain as Chain).equals(Chain.Optimism)) {
+    } else if ((chain as Chain).equals(Chain.Optimism) || (chain as Chain).equals(Chain.Zkevm)) {
       const l2TokenAddress = this.getL2CanonicalTokenAddress(
         this.tokenSymbol,
         chain
@@ -324,7 +324,7 @@ class CanonicalBridge extends Base {
         // Gnosis requires a higher gas limit
         gasLimit: 400000
       })
-    } else if ((chain as Chain).equals(Chain.Optimism)) {
+    } else if ((chain as Chain).equals(Chain.Optimism) || (chain as Chain).equals(Chain.Zkevm)) {
       const bridgeAddress = this.getL2CanonicalBridgeAddress(
         this.tokenSymbol,
         chain
@@ -487,7 +487,7 @@ class CanonicalBridge extends Base {
       factory = L2XDaiToken__factory
     } else if (this.chain.equals(Chain.Arbitrum)) {
       factory = ArbERC20__factory
-    } else if (this.chain.equals(Chain.Optimism)) {
+    } else if (this.chain.equals(Chain.Optimism) || this.chain.equals(Chain.Zkevm)) {
       factory = L2OptimismTokenBridge__factory
     }
     return this.getContract(factory, address, provider)
@@ -511,7 +511,7 @@ class CanonicalBridge extends Base {
       factory = L1XDaiForeignOmniBridge__factory
     } else if (this.chain.equals(Chain.Arbitrum)) {
       factory = ArbitrumGlobalInbox__factory
-    } else if (this.chain.equals(Chain.Optimism)) {
+    } else if (this.chain.equals(Chain.Optimism) || this.chain.equals(Chain.Zkevm)) {
       factory = L1OptimismTokenBridge__factory
     }
     return this.getContract(factory, address, provider)

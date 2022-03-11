@@ -82,6 +82,12 @@ export const metadata: Metadata = {
       image: MainnetLogo,
       nativeTokenSymbol: 'ETH',
     },
+    devnet: {
+      name: 'Ethereum',
+      isLayer1: true,
+      image: MainnetLogo,
+      nativeTokenSymbol: 'ETH',
+    },
     arbitrum: {
       name: 'Arbitrum',
       isLayer1: false,
@@ -105,6 +111,12 @@ export const metadata: Metadata = {
       isLayer1: false,
       image: PolygonLogo,
       nativeTokenSymbol: 'MATIC',
+    },
+    zkevm: {
+      name: 'ZK-EVM',
+      isLayer1: false,
+      image: ethLogo,
+      nativeTokenSymbol: 'ETH',
     },
   },
 }

@@ -20,5 +20,9 @@ export const chains: Chains = {
   optimism: {
     name: 'Optimism',
     slug: 'optimism'
+  },
+  zkevm: {
+    name: 'zkevm',
+    slug: 'zkevm'
   }
 }

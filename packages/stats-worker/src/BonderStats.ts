@@ -336,7 +336,13 @@ class BonderStats {
     const maticPrice = priceMap.MATIC
     dbData.ethPrice = ethPrice
     dbData.maticPrice = maticPrice
-    dbData.totalFees = (Number(dbData.polygonTxFees || 0) * maticPrice) + Number(dbData.gnosisTxFees || 0) + ((Number(dbData.arbitrumTxFees || 0) + Number(dbData.optimismTxFees || 0) + Number(dbData.ethereumTxFees || 0)) * ethPrice)
+    dbData.totalFees =
+      Number(dbData.polygonTxFees || 0) * maticPrice +
+      Number(dbData.gnosisTxFees || 0) +
+      (Number(dbData.arbitrumTxFees || 0) +
+        Number(dbData.optimismTxFees || 0) +
+        Number(dbData.ethereumTxFees || 0)) *
+        ethPrice
     console.log(dbData.totalFees)
 
     try {

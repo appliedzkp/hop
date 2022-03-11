@@ -13,4 +13,5 @@ export type Networks = {
   optimism?: Network
   gnosis?: Network
   polygon?: Network
+  zkevm?: Network
 }

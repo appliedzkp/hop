@@ -1134,7 +1134,12 @@ class HopBridge extends Base {
       const bridgeContract = await this.getBridgeContract(sourceChain)
       let pendingAmounts = BigNumber.from(0)
       for (const chain of bondableChains) {
-        const exists = this.getL2BridgeAddress(this.tokenSymbol, chain)
+        let exists;
+        try {
+          exists = this.getL2BridgeAddress(this.tokenSymbol, chain)
+        } catch (e) {
+          console.error(e)
+        }
         if (!exists) {
           continue
         }

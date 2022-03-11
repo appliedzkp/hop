@@ -1,6 +1,7 @@
 import { mainnetAddresses, mainnetNetworks } from './mainnet'
 import { addresses as kovanAddresses, networks as kovanNetworks } from './kovan'
 import { addresses as goerliAddresses, networks as goerliNetworks } from './goerli'
+import { addresses as devnetAddresses, networks as devnetNetworks } from './devnet'
 import { Slug } from '@hop-protocol/sdk'
 
 const reactAppNetwork = process.env.REACT_APP_NETWORK || Slug.mainnet
@@ -15,6 +16,9 @@ const isMainnet = hopAppNetwork === Slug.mainnet
 if (isMainnet) {
   addresses = mainnetAddresses
   networks = mainnetNetworks
+} else if (hopAppNetwork === Slug.devnet) {
+  addresses = devnetAddresses
+  networks = devnetNetworks
 } else if (hopAppNetwork === Slug.goerli) {
   addresses = goerliAddresses
   networks = goerliNetworks

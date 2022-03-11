@@ -1,6 +1,8 @@
 import fetch from 'isomorphic-fetch'
 import memoize from 'fast-memoize'
 import { Addresses } from '@hop-protocol/core/addresses'
+import * as hopAddresses from '@hop-protocol/core/addresses'
+import * as hopConfig from '@hop-protocol/core/config'
 import {
   ArbERC20,
   ArbERC20__factory,
@@ -533,13 +535,11 @@ class Base {
   }
 
   async getS3ConfigData () {
-    const url = `https://assets.hop.exchange/${this.network}/v1-core-config.json`
-    const res = await fetch(url)
-    const json = await res.json()
-    if (!json) {
-      throw new Error('expected json object')
+    const data = {
+      ...(hopAddresses as any)[this.network],
+      ...(hopConfig as any)[this.network]
     }
-    return json
+    return data
   }
 
   public getContract = getContract

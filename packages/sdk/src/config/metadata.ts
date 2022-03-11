@@ -5,7 +5,8 @@ export const metadata: any = {
     kovan: hopMetadata.kovan.tokens,
     goerli: hopMetadata.goerli.tokens,
     mainnet: hopMetadata.mainnet.tokens,
-    staging: hopMetadata.mainnet.tokens
+    staging: hopMetadata.mainnet.tokens,
+    devnet: hopMetadata.devnet.tokens
   },
   networks: {
     ethereum: {
@@ -32,6 +33,11 @@ export const metadata: any = {
       name: 'Polygon',
       isLayer1: false,
       nativeTokenSymbol: 'MATIC'
+    },
+    zkevm: {
+      name: 'zkevm',
+      isLayer1: false,
+      nativeTokenSymbol: 'ETH'
     }
   }
 }

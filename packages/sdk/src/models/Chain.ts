@@ -17,6 +17,7 @@ class Chain {
   static Arbitrum = newChain(ChainSlug.Arbitrum)
   static Gnosis = newChain(ChainSlug.Gnosis)
   static Polygon = newChain(ChainSlug.Polygon)
+  static Zkevm = newChain(ChainSlug.Zkevm)
 
   static fromSlug (slug: Slug | string) {
     if (slug === 'xdai') {
@@ -35,6 +36,7 @@ class Chain {
       this.slug === NetworkSlug.Goerli ||
       this.slug === NetworkSlug.Mainnet ||
       this.slug === NetworkSlug.Staging ||
+      this.slug === NetworkSlug.Devnet ||
       this.slug === ChainSlug.Ethereum
     ) {
       this.isL1 = true
@@ -64,7 +66,8 @@ function newChain (chain: NetworkSlug | ChainSlug | string) {
     chain === NetworkSlug.Mainnet ||
     chain === NetworkSlug.Staging ||
     chain === NetworkSlug.Goerli ||
-    chain === NetworkSlug.Kovan
+    chain === NetworkSlug.Kovan ||
+    chain === NetworkSlug.Devnet
   ) {
     chain = ChainSlug.Ethereum
   }

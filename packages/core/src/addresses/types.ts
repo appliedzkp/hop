@@ -58,6 +58,18 @@ export type Bridges = {
       l2Amb: string
       bridgeDeployedBlockNumber: number
     }
+    zkevm: {
+      l1CanonicalBridge: string
+      l1MessengerWrapper: string
+      l2CanonicalBridge: string
+      l2CanonicalToken: string
+      l2Bridge: string
+      l2HopBridgeToken: string
+      l2AmmWrapper: string
+      l2SaddleSwap: string
+      l2SaddleLpToken: string
+      bridgeDeployedBlockNumber: number
+    }
   }>
 }
 
@@ -67,30 +79,42 @@ export type Routes = {
     arbitrum?: string
     gnosis?: string
     polygon?: string
+    zkevm?: string
   },
   optimism?: {
     ethereum?: string
     arbitrum?: string
     gnosis?: string
     polygon?: string
+    zkevm?: string
   },
   arbitrum?: {
     ethereum?: string
     optimism?: string
     gnosis?: string
     polygon?: string
+    zkevm?: string
   },
   gnosis?: {
     ethereum?: string
     arbitrum?: string
     optimism?: string
     polygon?: string
+    zkevm?: string
   },
   polygon?: {
     ethereum?: string
     arbitrum?: string
     gnosis?: string
     optimism?: string
+    zkevm?: string
+  },
+  zkevm?: {
+    ethereum?: string
+    arbitrum?: string
+    gnosis?: string
+    optimism?: string
+    polygon?: string
   }
 }
 
