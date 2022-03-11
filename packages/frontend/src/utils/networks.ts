@@ -21,7 +21,7 @@ function normalizeNetworkToSlug(network?: Network | ChainSlug | ChainId) {
   if (network instanceof Network) {
     return network.slug
   }
-  if (typeof network === 'string' && network in ChainSlug) {
+  if (typeof network === 'string' && network in Slug) {
     return network
   }
   if (typeof network === 'number') {
@@ -84,40 +84,35 @@ export function getNetworkWaitConfirmations(tChain: TChain) {
   return networks[tChain.slug].waitConfirmations
 }
 
-export function isL1ToL2(srcNetwork?: Network | ChainSlug, destNetwork?: Network | ChainSlug) {
-  if (srcNetwork instanceof Network && destNetwork instanceof Network) {
-    return srcNetwork?.isLayer1 && !destNetwork?.isLayer1
+export function isLayer1(chain: Network | ChainSlug | undefined) {
+  if (chain instanceof Network) {
+    return chain.isLayer1
   }
-
-  if (typeof destNetwork === 'string' && destNetwork in ChainSlug) {
-    return srcNetwork === ChainSlug.Ethereum && destNetwork !== ChainSlug.Ethereum
+  if (typeof chain === 'string' && chain in Slug) {
+    return chain === ChainSlug.Ethereum
   }
-
   return false
+}
+
+export function isL1ToL2(srcNetwork?: Network | ChainSlug, destNetwork?: Network | ChainSlug) {
+  const srcCheck = isLayer1(srcNetwork)
+  const destCheck = !isLayer1(destNetwork)
+
+  return srcCheck && destCheck
 }
 
 export function isL2ToL1(srcNetwork?: Network | ChainSlug, destNetwork?: Network | ChainSlug) {
-  if (srcNetwork instanceof Network && destNetwork instanceof Network) {
-    return !srcNetwork.isLayer1 && destNetwork.isLayer1
-  }
+  const srcCheck = !isLayer1(srcNetwork)
+  const destCheck = isLayer1(destNetwork)
 
-  if (typeof destNetwork === 'string' && destNetwork in ChainSlug) {
-    return srcNetwork !== ChainSlug.Ethereum && destNetwork === ChainSlug.Ethereum
-  }
-
-  return false
+  return srcCheck && destCheck
 }
 
 export function isL2ToL2(srcNetwork?: Network | ChainSlug, destNetwork?: Network | ChainSlug) {
-  if (srcNetwork instanceof Network && destNetwork instanceof Network) {
-    return !srcNetwork?.isLayer1 && !destNetwork?.isLayer1
-  }
+  const srcCheck = !isLayer1(srcNetwork)
+  const destCheck = !isLayer1(destNetwork)
 
-  if (typeof destNetwork === 'string' && destNetwork in ChainSlug) {
-    return srcNetwork !== ChainSlug.Ethereum && destNetwork !== ChainSlug.Ethereum
-  }
-
-  return false
+  return srcCheck && destCheck
 }
 
 export function isProviderNetworkByChainId(chainId: ChainId, provider?: JsonRpcProvider) {
