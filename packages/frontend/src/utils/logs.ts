@@ -67,7 +67,7 @@ export function findTransferFromL1CompletedLog(
   return find<Event>(
     logs,
     (log: Event) =>
-      log.topics[0] === eventTopics.transferFromL1CompletedTopic &&
+      log.topics?.[0] === eventTopics.transferFromL1CompletedTopic &&
       isSameAddress(log.args?.recipient, recipient) &&
       log.args?.amount?.eq(amount) &&
       log.args?.deadline?.eq(deadline)
