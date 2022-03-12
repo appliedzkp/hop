@@ -43,7 +43,7 @@ export async function queryFilterTransferFromL1CompletedEvents(bridge, networkNa
   const evs = await Promise.all(
     blockTags.map(([fromBlock, toBlock]) => destL2Bridge.queryFilter(filter, fromBlock, toBlock))
   )
-  return evs
+  return evs.flat()
 }
 
 export enum MethodNames {
