@@ -1,0 +1,33 @@
+name: Docker
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        DOCKERFILE: ['docker/hop-frontend/Dockerfile']
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: setup swap
+        run: |
+          sudo fallocate -l 8g /swapfile
+          sudo chmod 0600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+
+      - name: Login to ghcr.io
+        env:
+          PAT: ${{ secrets.GITHUB_TOKEN }}
+        run: printf "$PAT" | docker login --username _ --password-stdin ghcr.io
+
+      - name: Build and push Docker images
+        env:
+          DOCKERFILE: ${{ matrix.DOCKERFILE }}
+          PLATFORM: 'linux/amd64,linux/arm64'
+        run: ./.github/workflows/docker.sh
